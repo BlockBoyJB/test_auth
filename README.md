@@ -26,6 +26,55 @@
 Решил использовать **_jwt_**, потому что он упростит работу с expiration time, да и будет удобнее с ним работать
 
 
+### Примеры запросов
+
+#### Регистрация
+`POST http://localhost:8000/api/v1/auth/sign-up`
+```json
+{
+  "email": "example@gmail.com",
+  "password": "123"
+}
+```
+Пример ответа
+```json
+{
+  "user_id": "uuid-string"
+}
+```
+
+#### Аутентификация
+`POST http://localhost:8000/api/v1/auth/sign-in`
+```json
+{
+  "user_id": "uuid-string",
+  "password": "123"
+}
+```
+Пример ответа
+```json
+{
+    "access_token": "jwt-token",
+    "refresh_token": "jwt-token"
+}
+```
+
+
+#### Рефреш операция
+`POST http://localhost:8000/api/v1/auth/refresh`
+```json
+{
+  "token": "jwt-refresh-token"
+}
+```
+Пример ответа
+```json
+{
+    "access_token": "jwt-token",
+    "refresh_token": "jwt-token"
+}
+```
+
 ### Тестовое задание
 Написать часть сервиса аутентификации.
 
