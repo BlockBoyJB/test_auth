@@ -1,0 +1,165 @@
+basePath: /
+definitions:
+  internal_controller_http_v1.authGetIDOutput:
+    properties:
+      user_id:
+        type: string
+    type: object
+  internal_controller_http_v1.authRefreshInput:
+    properties:
+      access:
+        type: string
+      refresh:
+        type: string
+    required:
+    - access
+    - refresh
+    type: object
+  internal_controller_http_v1.authSignInInput:
+    properties:
+      id:
+        type: string
+    required:
+    - id
+    type: object
+  test_auth_internal_service.TokenOutput:
+    properties:
+      access:
+        type: string
+      refresh:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: Auth service. Includes access (jwt), refresh (base64) tokens
+  title: Auth Service
+  version: "1.0"
+paths:
+  /api/v1/auth/logout:
+    get:
+      description: Log out operation makes a pair of access and refresh tokens invalid
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Log out
+      tags:
+      - auth
+  /api/v1/auth/me:
+    get:
+      description: Get user id from access token. Access token must be valid
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_controller_http_v1.authGetIDOutput'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get ID
+      tags:
+      - auth
+  /api/v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh operation for access and refresh pair tokens
+      parameters:
+      - description: input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controller_http_v1.authRefreshInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/test_auth_internal_service.TokenOutput'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Refresh
+      tags:
+      - auth
+  /api/v1/auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: Auth user, get access and refresh tokens
+      parameters:
+      - description: input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controller_http_v1.authSignInInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/test_auth_internal_service.TokenOutput'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Sign In
+      tags:
+      - auth
+securityDefinitions:
+  BearerAuth:
+    description: input token in format "Bearer {token}"
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
